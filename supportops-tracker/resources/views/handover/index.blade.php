@@ -1,6 +1,41 @@
 @extends('layouts.app')
 @section('title', 'Daily Handover')
 
+@push('styles')
+<style>
+/* ── Today's Activity Feed — server-rendered CSS (immune to Tailwind CDN timing) ── */
+.hb-feed-card {
+    background: linear-gradient(135deg, #2e1065 0%, #4c1d95 55%, #5b21b6 100%);
+    box-shadow: 0 20px 40px -8px rgba(76, 29, 149, 0.45), 0 4px 16px -4px rgba(0,0,0,0.25);
+}
+.hb-feed-icon {
+    background: rgba(255, 255, 255, 0.13);
+    backdrop-filter: blur(4px);
+}
+.hb-feed-row {
+    background: rgba(255, 255, 255, 0.09);
+    transition: background 150ms ease, transform 150ms ease;
+}
+.hb-feed-row:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateX(2px);
+}
+.hb-feed-avatar {
+    background: rgba(255, 255, 255, 0.20);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
+}
+/* Status badges — solid colors, no opacity fractions, WCAG AA contrast */
+.hb-badge-done        { background: #059669; color: #ffffff; }
+.hb-badge-in-progress { background: #7c3aed; color: #ffffff; }
+.hb-badge-pending     { background: #d97706; color: #ffffff; }
+/* Scrollbar styling inside the feed */
+.hb-feed-card ::-webkit-scrollbar       { width: 4px; }
+.hb-feed-card ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+.hb-feed-card ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+.hb-feed-card ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.40); }
+</style>
+@endpush
+
 @section('content')
 <div class="space-y-6">
 
@@ -20,35 +55,50 @@
 
     {{-- Today's Updates Summary --}}
     @if($todayUpdates->count() > 0)
-    <div class="bg-gradient-to-r from-brand-900 to-purple-900 rounded-2xl p-6 text-white">
-        <div class="flex items-center justify-between mb-4">
+    <div class="hb-feed-card rounded-2xl p-6 text-white shadow-xl">
+        <div class="flex items-center justify-between mb-5">
             <div>
-                <h3 class="text-base font-bold">Today's Activity Feed</h3>
-                <p class="text-sm text-brand-300">{{ $todayUpdates->count() }} update(s) logged today</p>
+                <h3 class="text-base font-bold text-white">Today's Activity Feed</h3>
+                <p class="text-sm font-medium mt-0.5" style="color: #c4b5fd;">
+                    {{ $todayUpdates->count() }} update(s) logged today
+                </p>
             </div>
-            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div class="hb-feed-icon w-12 h-12 rounded-2xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
             </div>
         </div>
-        <div class="space-y-2 max-h-40 overflow-y-auto">
+        <div class="space-y-2.5 max-h-48 overflow-y-auto pr-1">
             @foreach($todayUpdates as $update)
-            <div class="flex items-center gap-3 p-2.5 bg-white/[0.07] rounded-xl">
-                <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+            <div class="hb-feed-row flex items-center gap-3 px-3.5 py-3 rounded-xl">
+                {{-- Avatar --}}
+                <div class="hb-feed-avatar w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                     {{ strtoupper(substr($update->user->name ?? 'U', 0, 1)) }}
                 </div>
+
+                {{-- Content: title (primary) then user (secondary) --}}
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs text-white/90 truncate">
-                        <span class="font-semibold">{{ $update->user->name ?? 'Unknown' }}</span>
-                        → <span class="text-brand-300">{{ $update->activity->title ?? 'Deleted' }}</span>
+                    <p class="text-sm font-semibold text-white truncate leading-snug">
+                        {{ $update->activity->title ?? 'Deleted Activity' }}
+                    </p>
+                    <p class="text-xs font-medium mt-0.5 truncate" style="color: #c4b5fd;">
+                        by {{ $update->user->name ?? 'Unknown' }}
                     </p>
                 </div>
-                <span @class([
-                    'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase flex-shrink-0',
-                    'bg-emerald-500/30 text-emerald-300' => $update->status === 'done',
-                    'bg-blue-500/30 text-blue-300'       => $update->status === 'in_progress',
-                    'bg-amber-500/30 text-amber-300'     => $update->status === 'pending',
-                ])>{{ str_replace('_', ' ', $update->status) }}</span>
-                <span class="text-[10px] text-white/40 flex-shrink-0">{{ $update->created_at->format('H:i') }}</span>
+
+                {{-- Status badge + time --}}
+                <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+                    <span @class([
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide',
+                        'hb-badge-done'        => $update->status === 'done',
+                        'hb-badge-in-progress' => $update->status === 'in_progress',
+                        'hb-badge-pending'     => $update->status === 'pending',
+                    ])>{{ str_replace('_', ' ', $update->status) }}</span>
+                    <span class="text-[11px] font-semibold" style="color: #a78bfa;">
+                        {{ $update->created_at->format('H:i') }}
+                    </span>
+                </div>
             </div>
             @endforeach
         </div>
@@ -107,9 +157,7 @@
                                 @if($activity->updates->first())
                                 @php $latestUpdate = $activity->updates->first(); @endphp
                                 <div class="flex items-start gap-2 p-2.5 bg-gray-50 rounded-xl border border-gray-100 mb-2">
-                                    <div class="w-5 h-5 bg-brand-600 rounded-full flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0 mt-0.5">
-                                        {{ strtoupper(substr($latestUpdate->user->name ?? 'U', 0, 1)) }}
-                                    </div>
+                                    <x-avatar name="{{ $latestUpdate->user->name ?? 'U' }}" size="md" class="mt-0.5" />
                                     <div class="min-w-0">
                                         <p class="text-xs font-semibold text-gray-700">{{ $latestUpdate->user->name ?? 'Unknown' }} <span class="font-normal text-gray-400">· {{ $latestUpdate->created_at->diffForHumans() }}</span></p>
                                         @if($latestUpdate->remark)
@@ -194,7 +242,8 @@
                         </a>
                         <div class="flex items-center gap-2 text-xs text-gray-400">
                             @if($activity->updates->first())
-                            <span>by {{ $activity->updates->first()->user->name ?? 'Unknown' }}</span>
+                            <x-avatar name="{{ $activity->updates->first()->user->name ?? 'U' }}" size="sm" />
+                            <span>{{ $activity->updates->first()->user->name ?? 'Unknown' }}</span>
                             <span>·</span>
                             <span>{{ $activity->updated_at->diffForHumans() }}</span>
                             @endif

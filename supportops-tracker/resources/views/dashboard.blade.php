@@ -93,7 +93,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         {{-- Recent Activity Updates --}}
-        <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-900">Recent Activity Updates</h3>
@@ -101,30 +101,43 @@
                 </div>
                 <a href="{{ route('handover.index') }}" class="text-xs font-medium text-brand-600 hover:text-brand-700">View all →</a>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div class="divide-y divide-gray-100">
                 @forelse($recentUpdates as $update)
-                <div class="flex items-start gap-4 px-6 py-4 hover:bg-gray-50/50 transition-colors">
-                    <div class="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">
-                        {{ strtoupper(substr($update->user->name ?? 'U', 0, 1)) }}
-                    </div>
+                <div @class([
+                    'group flex items-start gap-4 pl-5 pr-6 py-4 hover:bg-slate-50 transition-colors duration-150 border-l-[3px]',
+                    'border-emerald-400' => $update->status === 'done',
+                    'border-blue-400'    => $update->status === 'in_progress',
+                    'border-amber-400'   => $update->status === 'pending',
+                ])>
+                    {{-- Avatar --}}
+                    <x-avatar name="{{ $update->user->name ?? 'U' }}" size="xl" class="shadow-sm ring-2 ring-white" />
+
+                    {{-- Content --}}
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-sm font-semibold text-gray-900">{{ $update->user->name ?? 'Unknown' }}</span>
+                        {{-- PRIMARY: activity title --}}
+                        <p class="text-sm font-semibold text-gray-900 leading-snug truncate">
+                            {{ $update->activity->title ?? 'Deleted Activity' }}
+                        </p>
+                        {{-- SECONDARY: who + status badge --}}
+                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                            <span class="text-xs font-medium text-gray-500">by {{ $update->user->name ?? 'Unknown' }}</span>
                             <span @class([
-                                'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide',
-                                'bg-emerald-100 text-emerald-700' => $update->status === 'done',
-                                'bg-blue-100 text-blue-700' => $update->status === 'in_progress',
-                                'bg-amber-100 text-amber-700' => $update->status === 'pending',
+                                'inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border',
+                                'bg-emerald-50 text-emerald-700 border-emerald-200' => $update->status === 'done',
+                                'bg-blue-50 text-blue-700 border-blue-200'          => $update->status === 'in_progress',
+                                'bg-amber-50 text-amber-700 border-amber-200'       => $update->status === 'pending',
                             ])>{{ $update->status_label }}</span>
                         </div>
-                        <p class="text-xs text-gray-500 mt-0.5 truncate">
-                            on <span class="font-medium text-gray-700">{{ $update->activity->title ?? 'Deleted Activity' }}</span>
-                        </p>
+                        {{-- TERTIARY: remark --}}
                         @if($update->remark)
-                        <p class="text-xs text-gray-400 mt-1 line-clamp-1">{{ $update->remark }}</p>
+                        <p class="text-xs text-gray-400 mt-1.5 line-clamp-1 italic">{{ $update->remark }}</p>
                         @endif
                     </div>
-                    <span class="text-[10px] text-gray-400 flex-shrink-0">{{ $update->created_at->diffForHumans() }}</span>
+
+                    {{-- Timestamp --}}
+                    <span class="text-[11px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 pt-0.5 whitespace-nowrap">
+                        {{ $update->created_at->diffForHumans() }}
+                    </span>
                 </div>
                 @empty
                 <div class="px-6 py-12 text-center">
@@ -163,8 +176,8 @@
                     </div>
                     <div class="flex items-center gap-3 text-xs text-gray-400">
                         @if($activity->assignee)
-                        <span class="flex items-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <span class="flex items-center gap-1.5">
+                            <x-avatar name="{{ $activity->assignee->name }}" size="sm" />
                             {{ $activity->assignee->name }}
                         </span>
                         @endif
@@ -240,9 +253,7 @@
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                                {{ strtoupper(substr($person->name, 0, 1)) }}
-                            </div>
+                            <x-avatar name="{{ $person->name }}" size="lg" />
                             <div>
                                 <p class="text-sm font-semibold text-gray-900">{{ $person->name }}</p>
                                 <p class="text-xs text-gray-400">{{ $person->department ?? 'No dept.' }}</p>

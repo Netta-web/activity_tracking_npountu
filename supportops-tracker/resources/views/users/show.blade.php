@@ -85,7 +85,7 @@
                 <div class="divide-y divide-gray-50">
                     @forelse($recentUpdates as $update)
                     <div class="flex items-start gap-4 px-6 py-4">
-                        <div class="w-2 h-2 rounded-full mt-2 flex-shrink-0 @if($update->status === 'done') bg-emerald-500 @elseif($update->status === 'in_progress') bg-blue-500 @else bg-amber-400 @endif"></div>
+                        <x-avatar name="{{ $update->user->name ?? $user->name }}" size="lg" class="mt-0.5" />
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-2">
                                 <a href="{{ route('activities.show', $update->activity_id) }}" class="text-sm font-semibold text-gray-900 hover:text-brand-600 transition-colors truncate">

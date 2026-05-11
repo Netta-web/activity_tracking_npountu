@@ -12,7 +12,10 @@
             </a>
             <div>
                 <h2 class="text-lg font-bold text-gray-900">{{ $activity->title }}</h2>
-                <p class="text-xs text-gray-400">Created by {{ $activity->creator->name ?? 'System' }} · {{ $activity->created_at->format('M j, Y') }}</p>
+                <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                    <x-avatar name="{{ $activity->creator->name ?? 'S' }}" size="xs" />
+                    <span>{{ $activity->creator->name ?? 'System' }} · {{ $activity->created_at->format('M j, Y') }}</span>
+                </div>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -161,9 +164,7 @@
                 <div class="divide-y divide-gray-50">
                     @foreach($activity->updates->sortByDesc('created_at') as $update)
                     <div class="px-6 py-4 flex gap-4">
-                        <div class="w-9 h-9 bg-gradient-to-br from-brand-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">
-                            {{ strtoupper(substr($update->user->name ?? 'U', 0, 1)) }}
-                        </div>
+                        <x-avatar name="{{ $update->user->name ?? 'U' }}" size="xl" class="mt-0.5" />
                         <div class="flex-1">
                             <div class="flex items-center flex-wrap gap-2 mb-1">
                                 <span class="text-sm font-semibold text-gray-900">{{ $update->user->name ?? 'Unknown User' }}</span>
@@ -236,9 +237,7 @@
                     <div class="border-t border-gray-100 pt-4">
                         <p class="text-xs text-gray-400 mb-1">Created By</p>
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-[10px] font-bold">
-                                {{ strtoupper(substr($activity->creator->name ?? 'S', 0, 1)) }}
-                            </div>
+                            <x-avatar name="{{ $activity->creator->name ?? 'S' }}" size="md" />
                             <p class="text-sm font-medium text-gray-900">{{ $activity->creator->name ?? 'System' }}</p>
                         </div>
                     </div>
@@ -246,9 +245,7 @@
                         <p class="text-xs text-gray-400 mb-1">Assigned To</p>
                         @if($activity->assignee)
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 bg-brand-100 rounded-full flex items-center justify-center text-brand-700 text-[10px] font-bold">
-                                {{ strtoupper(substr($activity->assignee->name, 0, 1)) }}
-                            </div>
+                            <x-avatar name="{{ $activity->assignee->name }}" size="md" />
                             <div>
                                 <p class="text-sm font-medium text-gray-900">{{ $activity->assignee->name }}</p>
                                 @if($activity->assignee->department)

@@ -174,9 +174,7 @@
                         </td>
                         <td class="px-4 py-3.5">
                             <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 bg-brand-100 rounded-full flex items-center justify-center text-brand-700 text-[10px] font-bold flex-shrink-0">
-                                    {{ strtoupper(substr($update->user->name ?? 'U', 0, 1)) }}
-                                </div>
+                                <x-avatar name="{{ $update->user->name ?? 'U' }}" size="md" />
                                 <span class="text-sm text-gray-700 whitespace-nowrap">{{ $update->user->name ?? 'Unknown' }}</span>
                             </div>
                         </td>

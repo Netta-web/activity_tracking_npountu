@@ -99,7 +99,10 @@
                                 <a href="{{ route('activities.show', $activity) }}" class="text-sm font-semibold text-gray-900 hover:text-brand-600 transition-colors group-hover:text-brand-600">
                                     {{ $activity->title }}
                                 </a>
-                                <p class="text-xs text-gray-400 mt-0.5">by {{ $activity->creator->name ?? 'System' }}</p>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <x-avatar name="{{ $activity->creator->name ?? 'S' }}" size="xs" />
+                                    <span class="text-xs text-gray-400">{{ $activity->creator->name ?? 'System' }}</span>
+                                </div>
                             </div>
                         </td>
                         <td class="px-4 py-4">
@@ -135,9 +138,7 @@
                         <td class="px-4 py-4">
                             @if($activity->assignee)
                             <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
-                                    {{ strtoupper(substr($activity->assignee->name, 0, 1)) }}
-                                </div>
+                                <x-avatar name="{{ $activity->assignee->name }}" size="md" />
                                 <span class="text-sm text-gray-700">{{ $activity->assignee->name }}</span>
                             </div>
                             @else
