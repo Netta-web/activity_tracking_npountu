@@ -1,0 +1,12 @@
+providers = ["php", "node"]
+
+[phases.install]
+cmds = [
+    "cd supportops-tracker && composer install --no-dev --optimize-autoloader --no-scripts",
+    "cd supportops-tracker && npm install"
+]
+
+[phases.build]
+cmds = [
+    "cd supportops-tracker && npm run build"
+]
