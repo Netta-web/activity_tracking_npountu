@@ -1,0 +1,10 @@
+vendor/
+node_modules/
+public/build/
+.git/
+.env
+.env.*
+storage/logs/*.log
+tests/
+deploy/
+*.md
