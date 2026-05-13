@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
         pdo pdo_mysql mbstring zip xml bcmath opcache \
     && rm -rf /var/lib/apt/lists/*
 
-# Node.js 18
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+# Node.js 22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
