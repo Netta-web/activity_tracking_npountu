@@ -18,18 +18,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Install PHP deps first (layer cached unless composer files change)
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
-
-# Install Node deps (layer cached unless package.json changes)
-COPY package.json ./
-RUN npm install
-
-# Copy the full application
 COPY . .
 
-# Build frontend assets
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
+RUN npm install
+
 RUN npm run build
 
 # Ensure storage directories exist and are writable
