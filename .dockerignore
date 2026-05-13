@@ -1,0 +1,9 @@
+supportops-tracker/vendor/
+supportops-tracker/node_modules/
+supportops-tracker/public/build/
+supportops-tracker/.env
+supportops-tracker/.env.*
+supportops-tracker/storage/logs/*.log
+supportops-tracker/tests/
+.git/
+*.md

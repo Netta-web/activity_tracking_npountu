@@ -4,7 +4,7 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./supportops-tracker/Dockerfile
-    dockerContext: ./supportops-tracker
+    dockerContext: .
     healthCheckPath: /up
 
     # Non-secret environment variables — set secrets in the Render dashboard
