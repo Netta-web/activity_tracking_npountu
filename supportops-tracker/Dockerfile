@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
         git curl zip unzip \
         libzip-dev libpng-dev libxml2-dev libonig-dev \
     && docker-php-ext-install \
-        pdo pdo_mysql mbstring zip xml bcmath ctype fileinfo tokenizer opcache \
+        pdo pdo_mysql mbstring zip xml bcmath opcache \
     && rm -rf /var/lib/apt/lists/*
 
 # Node.js 18
