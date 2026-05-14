@@ -11,34 +11,38 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Admin account
-        User::create([
-            'name'       => 'System Administrator',
-            'email'      => 'admin@supportops.com',
-            'password'   => Hash::make('Admin@1234'),
-            'role'       => 'admin',
-            'department' => 'IT Operations',
-            'is_active'  => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@supportops.com'],
+            [
+                'name'       => 'System Administrator',
+                'password'   => Hash::make('Admin@1234'),
+                'role'       => 'admin',
+                'department' => 'IT Operations',
+                'is_active'  => true,
+            ]
+        );
 
         // Support personnel
         $personnel = [
-            ['name' => 'Alice Mensah',   'email' => 'alice@supportops.com',   'dept' => 'Server Operations'],
-            ['name' => 'Bob Asante',     'email' => 'bob@supportops.com',     'dept' => 'Database Team'],
-            ['name' => 'Carol Owusu',    'email' => 'carol@supportops.com',   'dept' => 'Network Monitoring'],
-            ['name' => 'David Amoah',    'email' => 'david@supportops.com',   'dept' => 'API Services'],
-            ['name' => 'Eva Boateng',    'email' => 'eva@supportops.com',     'dept' => 'SMS Gateway'],
-            ['name' => 'Frank Acheampong', 'email' => 'frank@supportops.com', 'dept' => 'Security Operations'],
+            ['name' => 'Alice Mensah',     'email' => 'alice@supportops.com',   'dept' => 'Server Operations'],
+            ['name' => 'Bob Asante',       'email' => 'bob@supportops.com',     'dept' => 'Database Team'],
+            ['name' => 'Carol Owusu',      'email' => 'carol@supportops.com',   'dept' => 'Network Monitoring'],
+            ['name' => 'David Amoah',      'email' => 'david@supportops.com',   'dept' => 'API Services'],
+            ['name' => 'Eva Boateng',      'email' => 'eva@supportops.com',     'dept' => 'SMS Gateway'],
+            ['name' => 'Frank Acheampong', 'email' => 'frank@supportops.com',   'dept' => 'Security Operations'],
         ];
 
         foreach ($personnel as $person) {
-            User::create([
-                'name'       => $person['name'],
-                'email'      => $person['email'],
-                'password'   => Hash::make('Support@1234'),
-                'role'       => 'support',
-                'department' => $person['dept'],
-                'is_active'  => true,
-            ]);
+            User::firstOrCreate(
+                ['email' => $person['email']],
+                [
+                    'name'       => $person['name'],
+                    'password'   => Hash::make('Support@1234'),
+                    'role'       => 'support',
+                    'department' => $person['dept'],
+                    'is_active'  => true,
+                ]
+            );
         }
 
         $this->command->info('✅ Users seeded: 1 admin + 6 support personnel');
