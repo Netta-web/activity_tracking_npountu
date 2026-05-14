@@ -1,58 +1,193 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SupportOps Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A real-time activity tracking and shift handover platform built for IT support operations teams. SupportOps Tracker gives administrators full visibility across all personnel and tasks, while support staff see only their assigned work — ensuring clean, accountable handovers every shift.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### For Administrators
+- Full dashboard overview — total, pending, in-progress, done, critical, and overdue counts
+- Manage all activities across every department and assignee
+- Personnel performance breakdown (tasks assigned, pending, completed per staff member)
+- Category distribution chart across all service areas
+- Create, edit, reassign, and delete any activity
+- Manage user accounts
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### For Support Personnel
+- Personal dashboard scoped to assigned activities only
+- Log updates and remarks against activities
+- Track activity status through the full lifecycle: Pending → In Progress → Done
+- View shift handover board — pending items sorted by priority and due date
 
-## Learning Laravel
+### Activity Management
+- 10 built-in service categories: SMS Monitoring, Server Monitoring, Database Validation, API Health Check, Incident Response, Network Monitoring, Application Support, Security Audit, Backup Verification, Performance Review
+- Priority levels: Low, Medium, High, Critical (colour-coded)
+- Status tracking: Pending, In Progress, Done
+- Due date assignment with automatic overdue detection
+- Full update history per activity
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Reporting
+- Filterable activity update log (by date range, staff member, category, status, priority)
+- CSV export of filtered reports
+- Audit log of all system actions (create, update, delete)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Handover Board
+- Pending activities sorted by priority then due date
+- Recently completed items
+- Today's update feed — everything logged in the current shift
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Layer | Technology |
+|-------|-----------|
+| Framework | Laravel 13 (PHP 8.4) |
+| Frontend | Blade + Alpine.js + Tailwind CSS 3 |
+| Build tool | Vite 8 |
+| Auth | Laravel Breeze |
+| Database | MySQL 8 |
+| Session/Cache/Queue | Database driver |
+| Deployment | Docker on Render |
+| Node.js | 22 LTS |
+
+---
+
+## Local Development
+
+### Prerequisites
+- PHP 8.4+
+- Composer 2
+- Node.js 22+
+- MySQL 8
+
+### Setup
 
 ```bash
-composer require laravel/boost --dev
+# Clone the repository
+git clone https://github.com/Netta-web/activity_tracking_npountu.git
+cd activity_tracking_npountu/supportops-tracker
 
-php artisan boost:install
+# Install PHP dependencies
+composer install
+
+# Install Node dependencies
+npm install
+
+# Copy environment file and generate app key
+cp .env.example .env
+php artisan key:generate
+
+# Configure your database in .env, then run migrations and seed
+php artisan migrate --seed
+
+# Build frontend assets
+npm run build
+
+# Start the development server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+The application will be available at `http://localhost:8000`.
 
-## Contributing
+For active development with hot module replacement:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer run dev
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Environment Variables
 
-## Security Vulnerabilities
+Copy `.env.example` to `.env` and configure the following:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+APP_KEY=          # Generated via: php artisan key:generate
+APP_URL=          # e.g. https://your-domain.com
+
+DB_HOST=          # MySQL host
+DB_DATABASE=      # Database name
+DB_USERNAME=      # Database user
+DB_PASSWORD=      # Database password
+```
+
+All other values in `.env.example` are pre-configured with sensible production defaults.
+
+---
+
+## Database Seeding
+
+Running `php artisan migrate --seed` creates:
+
+- 1 administrator account
+- 6 support personnel accounts across different departments
+- Sample activities and update history
+
+See `database/seeders/UserSeeder.php` for seeded accounts.
+
+---
+
+## Deployment (Render)
+
+The project ships with a production-ready `Dockerfile` and `render.yaml`.
+
+### Steps
+
+1. Push the repository to GitHub
+2. In the [Render dashboard](https://render.com), create a **New Blueprint Instance** and connect the repository — Render reads `render.yaml` automatically
+3. Add the following secret environment variables in the Render dashboard:
+
+| Variable | Description |
+|----------|-------------|
+| `APP_KEY` | Generate with `php artisan key:generate --show` |
+| `APP_URL` | Your Render service URL |
+| `DB_HOST` | MySQL host from your database provider |
+| `DB_DATABASE` | Database name |
+| `DB_USERNAME` | Database username |
+| `DB_PASSWORD` | Database password |
+
+4. Deploy — migrations run automatically on every deploy
+
+### What the container does on start
+1. Discovers Laravel packages
+2. Links storage
+3. Runs `php artisan migrate --force`
+4. Caches config, routes, and views
+5. Starts the PHP built-in server on `$PORT`
+
+---
+
+## Role Reference
+
+| Role | Access |
+|------|--------|
+| `admin` | Full access to all activities, users, reports, and settings |
+| `support` | Access limited to personally assigned activities and handover board |
+
+---
+
+## Project Structure
+
+```
+supportops-tracker/
+├── app/
+│   ├── Http/Controllers/     # ActivityController, DashboardController, HandoverController, ReportController, UserController
+│   ├── Models/               # Activity, ActivityUpdate, AuditLog, User
+│   └── Policies/             # Authorization policies
+├── database/
+│   ├── migrations/           # Schema definitions
+│   └── seeders/              # Default users and sample data
+├── resources/
+│   ├── js/                   # Alpine.js + Axios bootstrap
+│   └── views/                # Blade templates
+├── Dockerfile                # Production Docker image (PHP 8.4 + Node 22)
+└── render.yaml               # Render deployment configuration (repo root)
+```
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
